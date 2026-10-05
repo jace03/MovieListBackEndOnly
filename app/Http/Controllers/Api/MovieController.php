@@ -85,6 +85,7 @@ class MovieController extends Controller
             'rating' => 'nullable|integer|min:0|max:10',
             'genre' => 'nullable|string|max:255',
             'decade' => 'nullable|string|max:255',
+            'holiday' => $sometimes.'required|in:Halloween,Christmas',
             'rank' => 'nullable|integer',
             'watched' => 'nullable|boolean',
             'notes' => 'nullable|string',

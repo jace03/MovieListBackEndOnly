@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use Database\Factories\MovieFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Movie extends Model
 {
-    /** @use HasFactory<\Database\Factories\MovieFactory> */
+    /** @use HasFactory<MovieFactory> */
     use HasFactory;
 
     protected $fillable = [
@@ -17,6 +18,7 @@ class Movie extends Model
         'rating',
         'genre',
         'decade',
+        'holiday',
         'rank',
         'watched',
         'notes',
