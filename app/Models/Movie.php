@@ -18,6 +18,7 @@ class Movie extends Model
         'rating',
         'genre',
         'decade',
+        'holiday',
         'rank',
         'watched',
         'notes',
