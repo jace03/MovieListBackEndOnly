@@ -5,6 +5,8 @@ namespace App\Models;
 use Database\Factories\MovieFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Movie extends Model
 {
@@ -18,7 +20,7 @@ class Movie extends Model
         'rating',
         'genre',
         'decade',
-        'holiday',
+        'holiday_id',
         'rank',
         'watched',
         'notes',
@@ -36,5 +38,15 @@ class Movie extends Model
             'rank' => 'integer',
             'watched' => 'boolean',
         ];
+    }
+
+    public function holiday(): BelongsTo
+    {
+        return $this->belongsTo(Holiday::class);
+    }
+
+    public function actors(): BelongsToMany
+    {
+        return $this->belongsToMany(Actor::class, 'movie_actor');
     }
 }
