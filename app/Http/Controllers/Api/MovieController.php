@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\MovieResource;
+use App\Models\Holiday;
 use App\Models\Movie;
 use Illuminate\Http\Request;
 
@@ -15,7 +16,7 @@ class MovieController extends Controller
     public function index()
     {
         return MovieResource::collection(
-            Movie::orderByRaw('`rank` IS NULL, `rank` ASC')->orderBy('created_at')->get()
+            Movie::with(['holiday', 'actors'])->orderBy('rank')->orderBy('created_at')->get()
         );
     }
 
@@ -28,7 +29,7 @@ class MovieController extends Controller
 
         $movie = Movie::create($validated);
 
-        return new MovieResource($movie);
+        return new MovieResource($movie->load(['holiday', 'actors']));
     }
 
     /**
@@ -36,7 +37,7 @@ class MovieController extends Controller
      */
     public function show(Movie $movie)
     {
-        return new MovieResource($movie);
+        return new MovieResource($movie->load(['holiday', 'actors']));
     }
 
     /**
@@ -48,7 +49,7 @@ class MovieController extends Controller
 
         $movie->update($validated);
 
-        return new MovieResource($movie);
+        return new MovieResource($movie->load(['holiday', 'actors']));
     }
 
     /**
@@ -68,7 +69,7 @@ class MovieController extends Controller
     {
         $movie->update(['watched' => ! $movie->watched]);
 
-        return new MovieResource($movie);
+        return new MovieResource($movie->load(['holiday', 'actors']));
     }
 
     /**
@@ -78,18 +79,31 @@ class MovieController extends Controller
     {
         $sometimes = $movie ? 'sometimes|' : '';
 
-        return $request->validate([
+        $validated = $request->validate([
             'title' => $sometimes.'required|string|max:255',
             'year' => 'nullable|integer',
             'added_by' => $sometimes.'required|in:His,Hers,Both',
             'rating' => 'nullable|integer|min:0|max:10',
             'genre' => 'nullable|string|max:255',
             'decade' => 'nullable|string|max:255',
-            'holiday' => $sometimes.'required|in:Halloween,Christmas',
-            'rank' => 'nullable|integer',
+            'holiday' => $sometimes.'required|string|exists:holidays,name',
+            'rank' => 'nullable|integer|min:1|max:100',
             'watched' => 'nullable|boolean',
             'notes' => 'nullable|string',
             'poster_url' => 'nullable|string|max:2048',
         ]);
+
+        // The API speaks holiday names; the database stores the holiday_id.
+        if (isset($validated['holiday'])) {
+            $validated['holiday_id'] = Holiday::where('name', $validated['holiday'])->value('id');
+            unset($validated['holiday']);
+        }
+
+        // Rank 1 is the top of the list; 100 means unranked.
+        if (array_key_exists('rank', $validated) && $validated['rank'] === null) {
+            $validated['rank'] = 100;
+        }
+
+        return $validated;
     }
 }
