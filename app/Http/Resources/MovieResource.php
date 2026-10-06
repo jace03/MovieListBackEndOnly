@@ -25,6 +25,7 @@ class MovieResource extends JsonResource
             'holiday' => $this->holiday?->name,
             'holiday_id' => $this->holiday_id,
             'rank' => $this->rank,
+            'watch_window' => $this->watch_window->value,
             'watched' => $this->watched,
             'notes' => $this->notes,
             'poster_url' => $this->poster_url,

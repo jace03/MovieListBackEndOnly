@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\WatchWindow;
 use Database\Factories\MovieFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -13,6 +14,15 @@ class Movie extends Model
     /** @use HasFactory<MovieFactory> */
     use HasFactory;
 
+    /**
+     * Mirrors the column default so a freshly created model already carries it.
+     *
+     * @var array<string, string>
+     */
+    protected $attributes = [
+        'watch_window' => 'month_away',
+    ];
+
     protected $fillable = [
         'title',
         'year',
@@ -22,6 +32,7 @@ class Movie extends Model
         'decade',
         'holiday_id',
         'rank',
+        'watch_window',
         'watched',
         'notes',
         'poster_url',
@@ -36,6 +47,7 @@ class Movie extends Model
             'year' => 'integer',
             'rating' => 'integer',
             'rank' => 'integer',
+            'watch_window' => WatchWindow::class,
             'watched' => 'boolean',
         ];
     }

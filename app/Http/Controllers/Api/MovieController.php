@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Enums\WatchWindow;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\MovieResource;
 use App\Models\Holiday;
 use App\Models\Movie;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class MovieController extends Controller
 {
@@ -88,6 +90,7 @@ class MovieController extends Controller
             'decade' => 'nullable|string|max:255',
             'holiday' => $sometimes.'required|string|exists:holidays,name',
             'rank' => 'nullable|integer|min:1|max:100',
+            'watch_window' => ['sometimes', Rule::enum(WatchWindow::class)],
             'watched' => 'nullable|boolean',
             'notes' => 'nullable|string',
             'poster_url' => 'nullable|string|max:2048',
